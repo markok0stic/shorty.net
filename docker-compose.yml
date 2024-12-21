@@ -1,0 +1,22 @@
+services:
+  shorty-redis:
+    container_name: shorty-redis
+    image: redis/redis-stack
+    environment:
+      - REDIS_ARGS=--save 20 1 --loglevel warning --requirepass password
+    restart: unless-stopped
+    ports:
+      - '6381:6379'
+      - '8002:8001'
+    volumes:
+      - shorty-redis:/data
+    networks:
+      - shorty-network 
+volumes:
+  shorty-redis:
+    driver: local
+
+networks:
+  shorty-network:
+    name: network
+    driver: bridge
