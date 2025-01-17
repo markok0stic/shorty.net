@@ -4,6 +4,7 @@ using Shorty.NET.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAppDependencies(builder.Configuration);
@@ -19,12 +20,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// app.UseStaticFiles();
+app.UseStaticFiles();
 
-// app.UseAuthorization();
+app.UseRouting();
+
+app.UseAuthorization();
 
 app.UseGlobalErrorHandler(logger:app.Logger);
 
 app.RegisterApplicationRoutes();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllers();
 
 app.Run();

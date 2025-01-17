@@ -1,0 +1,67 @@
+@model Shorty.NET.Models.UrlShorteningViewModel
+@{
+    Layout = "~/Views/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h1 class="text-center mb-4">URL Shortener</h1>
+
+                    <form method="post" class="mb-4">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label for="originalUrl" class="form-label">Enter URL</label>
+                            <input type="url" class="form-control" id="originalUrl" name="OriginalUrl"
+                                   value="@Model.OriginalUrl" required placeholder="https://example.com"/>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Shorten URL</button>
+                    </form>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.ShortenedUrl))
+                    {
+                        <div class="alert alert-success text-center">
+                            <strong>Shortened URL:</strong>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <a href="@Model.ShortenedUrl" target="_blank" id="shortenedUrlLink">@Model.ShortenedUrl</a>
+                                <div class="position-relative">
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="copyToClipboard(this)">
+                                        Copy
+                                    </button>
+                                    <span class="copied-tooltip position-absolute top-0 start-100 translate-middle badge bg-success text-white"
+                                          style="display: none; font-size: 0.75rem; padding: 5px 10px;">
+                                        Copied!
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Error))
+                    {
+                        <div class="alert alert-danger text-center">
+                            @Model.Error
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyToClipboard(button) {
+        const urlText = document.getElementById("shortenedUrlLink").textContent;
+        navigator.clipboard.writeText(urlText).then(() => {
+            const tooltip = button.nextElementSibling;
+            tooltip.style.display = "inline-block";
+            setTimeout(() => {
+                tooltip.style.display = "none";
+            }, 2000);
+        }).catch(err => {
+            console.error("Failed to copy URL: ", err);
+        });
+    }
+</script>
